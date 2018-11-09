@@ -25,6 +25,7 @@ dl.parameters["form_compiler"]["quadrature_degree"] = deg
 plt.rcParams.update({'font.size': 15})
 # tolerance
 tol = 1e-8
+np.random.seed(0)
 ##################################################################################
 # set the geometry accordingly
 ##################################################################################
@@ -198,10 +199,11 @@ def create_bounds(wMin, wMax, functionSpace, boundaryCondtions=None):
 # main function
 ##################################################################################
 def main(dt, tEnd,
-         length=10.0, height=5.0, numElementsFilm=1.5, reGen=True,
+         length=10.0, height=5.0, numElementsFilm=2.0, reGen=True,
          ratLame=5.0, ratFilmSub=100.0):
-    fileDir = ("results-dt-%.2f-tEnd-%.0f-L-%.1f-H-%.1f-ratioLame-%.0f-ratioFilm-%.0f" %
-               (dt, tEnd, length, height, ratLame, ratFilmSub))
+    #fileDir = ("results-dt-%.2f-tEnd-%.0f-L-%.1f-H-%.1f-ratioLame-%.0f-ratioFilm-%.0f" %
+    #           (dt, tEnd, length, height, ratLame, ratFilmSub))
+    fileDir = "results-1"
     # create geometry
     rectDomain = Geometry(length=length, height=height, filmHeight=0.05)
     rectDomain.read_mesh(numElementsFilm, reGen)
@@ -269,14 +271,18 @@ def main(dt, tEnd,
     gF = 0.0
     outDisp = dl.File(fileDir + "/displacement.pvd")
     outDisp << (w, 0.0)
-
+    iCounter = 0
+    wArray = w.compute_vertex_values()
+    
     while gF <= growthEnd - tol:
-        gF += growthRate * dt
+        gF += growthRate * dt; iCounter += 1;
         growthFactor.gF = gF
+        w.vector()[:] += 2e-04 * np.random.uniform(-1, 1, w.vector().local_size())
         nIters, converged = solver.solve(problem, w.vector(),
                                          wLowerBound.vector(),
                                          wUpperBound.vector())
-        w.vector()[:] += 2e-04 * np.random.uniform(-1, 1, w.vector().local_size())
+        wArray[:] = w.compute_vertex_values()
+        np.save(fileDir+"/w-{}.npy".format(iCounter), wArray)
         print("--- growth = %.4f, niters = %d, dt = %.5f -----" % (1+gF, nIters, dt))
         outDisp << (w, gF)
 

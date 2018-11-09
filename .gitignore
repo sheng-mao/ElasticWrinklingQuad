@@ -8,3 +8,5 @@
 *.msh
 *.xdmf
 *.DS_Store
+*.npy
+nonlinear_elasticity_wrinkling_v33.py

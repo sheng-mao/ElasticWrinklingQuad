@@ -12,9 +12,9 @@ from HyperElasticity import main
 """
 Parameters for the main function
     dt, tEnd,
-    length=10.0, height=5.0, numElementsFilm=1.5, reGen=True,
+    length=10.0, height=5.0, numElementsFilm=2.0, reGen=True,
     ratLame=5.0, ratFilmSub=100.0
 """
-main(0.01, 7.0， numElementsFilm=2)
+main(0.01, 7.0, numElementsFilm=2)
 
 
