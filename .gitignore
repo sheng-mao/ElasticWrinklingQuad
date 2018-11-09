@@ -1,0 +1,9 @@
+*~
+*.exe
+*.out
+*.pvd
+*.vtu
+*.pyc
+*.h5
+*.msh
+*.xdmf
